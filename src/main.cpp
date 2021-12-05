@@ -3,7 +3,9 @@
 
 
 Adafruit_INA219 ina219_1(0x40);
-// Adafruit_INA219 ina219_2(0x41);
+Adafruit_INA219 ina219_2(0x41);
+Adafruit_INA219 ina219_3(0x44);
+Adafruit_INA219 ina219_4(0x45);
 
 void Adafruit_INA219::setCalibration_12V_10A(float rval) {
 
@@ -67,14 +69,24 @@ void setup(void)
   Serial.println("Hello!");
   
   if (! ina219_1.begin()) {
-    Serial.println("Failed to find INA219 chip");
+    Serial.println("Failed to find INA219 1 chip");
     while (1) { delay(10); }
   }
 
-  //  if (! ina219_2.begin()) {
-  //   Serial.println("Failed to find INA219 chip");
-  //   while (1) { delay(10); }
-  // }
+   if (! ina219_2.begin()) {
+    Serial.println("Failed to find INA219 2 chip");
+    while (1) { delay(10); }
+  }
+
+  if (! ina219_3.begin()) {
+    Serial.println("Failed to find INA219 3 chip");
+    while (1) { delay(10); }
+  }
+
+  if (! ina219_4.begin()) {
+    Serial.println("Failed to find INA219 4 chip");
+    while (1) { delay(10); }
+  }
 
   // To use a slightly lower 32V, 1A range (higher precision on amps):
   //ina219.setCalibration_32V_1A();
@@ -89,44 +101,75 @@ void setup(void)
   
   */
   ina219_1.setCalibration_12V_10A(0.00315);
-  // ina219_2.setCalibration_12V_10A(0.00315);
+  ina219_2.setCalibration_12V_10A(0.00315);
+  ina219_3.setCalibration_12V_10A(0.00315);
+  ina219_4.setCalibration_12V_10A(0.00315);
 
   Serial.println("Measuring voltage and current with INA219 ...");
 }
 
 void loop(void) 
 {
-  float shuntvoltage = 0;
-  float busvoltage = 0;
-  float current_mA = 0;
-  float loadvoltage = 0;
-  float power_mW = 0;
+  float a_shuntvoltage = 0;
+  float a_busvoltage = 0;
+  float a_current_mA = 0;
+  float a_loadvoltage = 0;
+  float a_power_mW = 0;
 
-  shuntvoltage = ina219_1.getShuntVoltage_mV();
-  busvoltage = ina219_1.getBusVoltage_V();
-  current_mA = ina219_1.getCurrent_mA();
-  power_mW = ina219_1.getPower_mW();
-  loadvoltage = busvoltage + (shuntvoltage / 1000);
+  float b_shuntvoltage = 0;
+  float b_busvoltage = 0;
+  float b_current_mA = 0;
+  float b_loadvoltage = 0;
+  float b_power_mW = 0;
+
+  float c_shuntvoltage = 0;
+  float c_busvoltage = 0;
+  float c_current_mA = 0;
+  float c_loadvoltage = 0;
+  float c_power_mW = 0;
+
+  float d_shuntvoltage = 0;
+  float d_busvoltage = 0;
+  float d_current_mA = 0;
+  float d_loadvoltage = 0;
+  float d_power_mW = 0;
+
+  a_shuntvoltage = ina219_1.getShuntVoltage_mV();
+  a_busvoltage = ina219_1.getBusVoltage_V();
+  a_current_mA = ina219_1.getCurrent_mA();
+  a_power_mW = ina219_1.getPower_mW();
+  a_loadvoltage = a_busvoltage + (a_shuntvoltage / 1000);
+
+  b_shuntvoltage = ina219_2.getShuntVoltage_mV();
+  b_busvoltage = ina219_2.getBusVoltage_V();
+  b_current_mA = ina219_2.getCurrent_mA();
+  b_power_mW = ina219_2.getPower_mW();
+  b_loadvoltage = b_busvoltage + (b_shuntvoltage / 1000);
+
+  c_shuntvoltage = ina219_3.getShuntVoltage_mV();
+  c_busvoltage = ina219_3.getBusVoltage_V();
+  c_current_mA = ina219_3.getCurrent_mA();
+  c_power_mW = ina219_3.getPower_mW();
+  c_loadvoltage = c_busvoltage + (c_shuntvoltage / 1000);
+
+  d_shuntvoltage = ina219_4.getShuntVoltage_mV();
+  d_busvoltage = ina219_4.getBusVoltage_V();
+  d_current_mA = ina219_4.getCurrent_mA();
+  d_power_mW = ina219_4.getPower_mW();
+  d_loadvoltage = d_busvoltage + (d_shuntvoltage / 1000);
+
+  char buffer[200];
   
-  Serial.print("Bus Voltage:   "); Serial.print(busvoltage); Serial.println(" V");
-  Serial.print("Shunt Voltage: "); Serial.print(shuntvoltage); Serial.println(" mV");
-  Serial.print("Load Voltage:  "); Serial.print(loadvoltage); Serial.println(" V");
-  Serial.print("Current:       "); Serial.print(current_mA); Serial.println(" mA");
-  Serial.print("Power:         "); Serial.print(power_mW); Serial.println(" mW");
+  Serial.println("  I2C ID  |    Bus V     |    Shunt V   |    Load V    |  Current mA  |   Power mW");
+  sprintf(buffer, "   0x40   |%14.02f|%14.02f|%14.02f|%14.02f|%14.02f", a_busvoltage, a_shuntvoltage, a_loadvoltage, a_current_mA, a_power_mW);
+  Serial.println(buffer);
+  sprintf(buffer, "   0x41   |%14.02f|%14.02f|%14.02f|%14.02f|%14.02f", b_busvoltage, b_shuntvoltage, b_loadvoltage, b_current_mA, b_power_mW);
+  Serial.println(buffer);
+  sprintf(buffer, "   0x44   |%14.02f|%14.02f|%14.02f|%14.02f|%14.02f", c_busvoltage, c_shuntvoltage, c_loadvoltage, c_current_mA, c_power_mW);
+  Serial.println(buffer);
+  sprintf(buffer, "   0x45   |%14.02f|%14.02f|%14.02f|%14.02f|%14.02f", d_busvoltage, d_shuntvoltage, d_loadvoltage, d_current_mA, d_power_mW);
+  Serial.println(buffer);
   Serial.println("");
 
-  // shuntvoltage = ina219_2.getShuntVoltage_mV();
-  // busvoltage = ina219_2.getBusVoltage_V();
-  // current_mA = ina219_2.getCurrent_mA();
-  // power_mW = ina219_2.getPower_mW();
-  // loadvoltage = busvoltage + (shuntvoltage / 1000);
-  
-  // Serial.print("2 Bus Voltage:   "); Serial.print(busvoltage); Serial.println(" V");
-  // Serial.print("2 Shunt Voltage: "); Serial.print(shuntvoltage); Serial.println(" mV");
-  // Serial.print("2 Load Voltage:  "); Serial.print(loadvoltage); Serial.println(" V");
-  // Serial.print("2 Current:       "); Serial.print(current_mA); Serial.println(" mA");
-  // Serial.print("2 Power:         "); Serial.print(power_mW); Serial.println(" mW");
-  // Serial.println("");
-
-  delay(2000);
+  delay(1000);
 }
